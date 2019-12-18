@@ -27,7 +27,6 @@ class ShopPage extends React.Component {
       // Here update loading state
       this.setState({loading: false});
     })
-
   }
   render() {
     const { match } = this.props;
