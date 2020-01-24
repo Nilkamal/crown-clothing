@@ -1,6 +1,8 @@
 import React from 'react';
 import FormInput from '../form-input/form-input.component';
 import CustomButton from '../custom-button/custom-button.component';
+import { connect } from 'react-redux';
+import { signUpStart } from '../../redux/user/user.actions';
 
 import { auth, createUserProfileDocument } from '../../firebase/firebase.utils';
 import './sign-up.styles.scss';
@@ -19,7 +21,7 @@ class SignUp extends React.Component {
 
     handleSubmit = async (event) => {
         event.preventDefault();
-
+        const { signUpStart }  = this.props;
         const { displayName, email, password, confirmPassword, phoneNumber } = this.state;
 
         if (password !== confirmPassword) {
@@ -27,19 +29,20 @@ class SignUp extends React.Component {
             return;
         }
 
-        try {
-            const { user } = await auth.createUserWithEmailAndPassword(email, password);
-            await createUserProfileDocument(user, { displayName, email, password, confirmPassword, phoneNumber });
-            this.setState({
-                displayName: '',
-                email: '',
-                password: '',
-                confirmPassword: '',
-                phoneNumber: '',
-            })
-        } catch (error) {
-            console.error(error);
-        }
+        signUpStart({displayName, email, password, phoneNumber});
+        // try {
+        //     const { user } = await auth.createUserWithEmailAndPassword(email, password);
+        //     await createUserProfileDocument(user, { displayName, email, password, confirmPassword, phoneNumber });
+        //     this.setState({
+        //         displayName: '',
+        //         email: '',
+        //         password: '',
+        //         confirmPassword: '',
+        //         phoneNumber: '',
+        //     })
+        // } catch (error) {
+        //     console.error(error);
+        // }
 
     }
 
@@ -49,6 +52,7 @@ class SignUp extends React.Component {
             [name]: value
         })
     }
+    
     render() {
         const { displayName, email, password, confirmPassword, phoneNumber } = this.state;
         return (<div className='sign-up'>
@@ -105,4 +109,7 @@ class SignUp extends React.Component {
     }
 }
 
-export default SignUp;
+const mapDispatchToProps = dispatch => ({
+    signUpStart: (user) => dispatch(signUpStart(user))
+})
+export default connect(null, mapDispatchToProps)(SignUp);
